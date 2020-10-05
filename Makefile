@@ -11,3 +11,10 @@ endif
 
 # call the project makefile!
 include $(OF_ROOT)/libs/openFrameworksCompiled/project/makefileCommon/compile.project.mk
+
+ifeq ($(PLATFORM_OS),Darwin)
+macos: Release
+	install_name_tool -change @executable_path/libfmodex.dylib @loader_path/libfmodex.dylib bin/$(EXTNAME).pd_darwin.app/Contents/MacOS/$(EXTNAME).pd_darwin
+endif
+
+

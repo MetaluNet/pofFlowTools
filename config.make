@@ -7,6 +7,7 @@
 #$(shell echo "#define POF_VERSION $(POF_GITVERSION)" > ../src/VERSION)
 #$(shell touch ../src/version.cc)
 #MAKEFILE_DEBUG=""
+
 PROJECT_NO_STATICS=""
 
 EXTNAME=pofflowtools
@@ -22,6 +23,8 @@ IS64BIT=$(shell if [ -n "`uname -a | grep x86_64`" ] ; then echo yes ; else echo
 
 ISARM=$(shell if [ -n "`uname -m | grep arm`" ] ; then echo yes ; else echo no ; fi)
 
+PROJECT_CFLAGS = -I$(POFSRC)
+
 ifeq ($(PLATFORM_OS),Linux)
 	ifeq ($(ISARM),yes)
 		SUFFIX = l_arm
@@ -31,12 +34,15 @@ ifeq ($(PLATFORM_OS),Linux)
 		SUFFIX = l_i386
 	endif
 	APPNAME=$(EXTNAME).$(SUFFIX)
-	PROJECT_CFLAGS = -fPIC -I$(POFSRC)
+	PROJECT_CFLAGS += -fPIC
 	PROJECT_LDFLAGS = -rdynamic -shared -Wl,-rpath=./libs
 	#PROJECT_LDFLAGS = -rdynamic -shared -Wl,-rpath="./libs:'$ORIGIN/libs'"
+	PLATFORM_RUN_COMMAND = pd -path bin/ -lib pof -open help/$(EXTNAME)-help.pd
+else ifeq ($(PLATFORM_OS),Darwin)
+	APPNAME=$(EXTNAME).pd_darwin
+	PROJECT_LDFLAGS = -undefined dynamic_lookup -rdynamic -shared
+	PLATFORM_RUN_COMMAND = /Applications/Pd-0.50-2.app/Contents/Resources/bin/pd -path bin/pofflowtools.pd_darwin.app/Contents/MacOS/ -open help/pofflowtools-help.pd
 endif
-
-PLATFORM_RUN_COMMAND = pd -path bin/ -lib pof -open help/$(EXTNAME)-help.pd
 
 ################################################################################
 # OF ROOT
