@@ -1,4 +1,4 @@
-#N canvas 480 278 840 504 12;
+#N canvas 647 135 840 553 12;
 #X declare -path ../bin -lib pof -lib pofflowtools;
 #X obj 27 57 pofhead;
 #X obj 27 302 poffluid;
@@ -12,19 +12,19 @@
 #X obj 423 405 pofcirc 25 25;
 #X floatatom 467 381 5 0 0 0 - - -;
 #X obj 423 228 poftouch 1280 720;
-#X msg 60 268 showgui \$1;
+#X msg 50 268 showgui \$1;
 #X obj 60 247 tgl 15 0 empty empty empty 17 7 0 10 -260097 -1 -1 0
 1;
 #X obj 27 105 t a a a, f 57;
-#X obj 257 319 pofopticalflow 800 600;
-#X msg 282 287 showgui \$1;
-#X obj 282 266 tgl 15 0 empty empty empty 17 7 0 10 -260097 -1 -1 0
+#X obj 257 289 pofopticalflow 800 600;
+#X msg 282 260 showgui \$1;
+#X obj 282 239 tgl 15 0 empty empty empty 17 7 0 10 -260097 -1 -1 0
 1;
-#X obj 225 163 t a a;
+#X obj 225 136 t a a;
 #X obj 27 152 pofvisible 1;
 #X obj 41 129 tgl 15 0 empty empty empty 17 7 0 10 -4034 -1 -1 0 1
 ;
-#X obj 244 345 tgl 15 0 empty empty draw_opticalflow 17 7 0 10 -4034
+#X obj 244 315 tgl 15 0 empty empty draw_opticalflow 17 7 0 10 -4034
 -1 -1 0 1;
 #N canvas 1094 259 520 300 scalarshader 0;
 #X obj 37 37 inlet;
@@ -52,11 +52,11 @@
 #X connect 8 0 1 0;
 #X connect 10 0 1 0;
 #X connect 11 0 1 0;
-#X restore 225 428 pd scalarshader;
+#X restore 225 391 pd scalarshader;
 #X obj 423 204 t a a, f 37;
 #X obj 679 256 pofrect 1e+06 1e+06;
 #X obj 679 232 pofcolor 0 0 0 1;
-#X obj 225 395 poftexture mousedecay;
+#X obj 225 363 poftexture mousedecay;
 #N canvas 2319 344 701 668 params 0;
 #X obj 93 607 outlet;
 #X floatatom 66 29 5 0 0 0 - - -;
@@ -153,7 +153,7 @@
 #X connect 39 0 1 0;
 #X connect 40 0 14 0;
 #X connect 41 0 9 0;
-#X restore 60 224 pd params;
+#X restore 50 224 pd params;
 #X obj 193 78 bng 15 250 50 0 empty empty empty 17 7 0 10 -262144 -1
 -1;
 #N canvas 3047 328 513 585 params 0;
@@ -216,8 +216,8 @@
 #X connect 23 0 7 0;
 #X connect 24 0 7 0;
 #X connect 25 0 17 0;
-#X restore 281 238 pd params;
-#X obj 225 451 pofplane 1280 720;
+#X restore 281 211 pd params;
+#X obj 225 414 pofplane 1280 720;
 #X obj 423 180 poffbo mousebuf 1280 720 RGB;
 #X obj 190 54 loadbang;
 #X msg 679 327 1;
@@ -227,15 +227,19 @@
 -1 -1 0 1;
 #X obj 610 332 hsl 60 15 0 1 0 0 empty empty empty -2 -8 0 10 -4160
 -1 -1 0 1;
-#X msg 275 194 source mousebuf \, decay mousedecay, f 16;
-#X obj 225 367 pofvisible 1;
-#X msg 60 185 density mousebuf 0.5 \, velocity mousedecay 2, f 21
-;
+#X msg 275 167 source mousebuf \, decay mousedecay, f 16;
+#X obj 225 337 pofvisible 1;
 #X obj 423 155 pofcolor 1 1 1 0;
 #X obj 28 12 declare -path ../bin -lib pof -lib pofflowtools;
 #X text 437 28 see: https://github.com/moostrik/ofxFlowTools.git;
 #X text 409 10 This is a Pof port of Matthias Oostrik's ofxFlowTools
 ;
+#X msg 50 185 density 0 mousebuf 0.5 \, velocity 0 mousedecay 2, f
+24;
+#X text 12 488 density INDEX(0-3) TEXTURE VALUE(0-1);
+#X text 13 502 velocity INDEX(0-3) TEXTURE VALUE(0-1);
+#X text 15 454 Up to 4 add-to-velocity layers and 4 add-to-density
+layers can be used together:, f 44;
 #X connect 0 0 13 0;
 #X connect 2 0 5 1;
 #X connect 2 1 5 2;
@@ -246,7 +250,7 @@
 #X connect 4 0 6 4;
 #X connect 5 0 6 0;
 #X connect 6 0 8 0;
-#X connect 7 0 39 4;
+#X connect 7 0 38 4;
 #X connect 9 0 8 1;
 #X connect 9 0 8 2;
 #X connect 10 0 5 0;
@@ -255,7 +259,7 @@
 #X connect 12 0 11 0;
 #X connect 13 0 18 0;
 #X connect 13 1 17 0;
-#X connect 13 2 39 0;
+#X connect 13 2 38 0;
 #X connect 15 0 14 0;
 #X connect 16 0 15 0;
 #X connect 17 0 37 0;
@@ -269,7 +273,7 @@
 #X connect 24 0 23 0;
 #X connect 25 0 21 0;
 #X connect 26 0 1 0;
-#X connect 27 0 38 0;
+#X connect 27 0 42 0;
 #X connect 27 0 36 0;
 #X connect 28 0 14 0;
 #X connect 30 0 22 0;
@@ -280,5 +284,5 @@
 #X connect 35 0 6 3;
 #X connect 36 0 14 0;
 #X connect 37 0 25 0;
-#X connect 38 0 1 0;
-#X connect 39 0 30 0;
+#X connect 38 0 30 0;
+#X connect 42 0 1 0;

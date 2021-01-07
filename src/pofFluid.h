@@ -8,6 +8,7 @@
 #include "pofBase.h"
 #include "ofxFlowTools.h"
 #include "ofxGui.h"
+#define POFFLUID_MAX_LAYERS 4
 
 using namespace flowTools;
 
@@ -30,12 +31,12 @@ class pofFluid: public pofBase {
 		ftFluidSimulation	*fluidSimulation;
 		ofxPanel			*gui;
 
-		t_symbol 			*densityTexture;
-		t_symbol 			*velocityTexture;
+		t_symbol 			*densityTexture[POFFLUID_MAX_LAYERS];
+		t_symbol 			*velocityTexture[POFFLUID_MAX_LAYERS];
 		t_symbol 			*pressureTexture;
 		t_symbol 			*obstacleTexture;
-		float 				densityForce;
-		float 				velocityForce;
+		float 				densityForce[POFFLUID_MAX_LAYERS];
+		float 				velocityForce[POFFLUID_MAX_LAYERS];
 		float 				pressureForce;
 		bool 				showGui;
 

@@ -24,18 +24,22 @@ void pofFluid_free(void *x)
 	delete (pofFluid*)(((PdObject*)x)->parent);
 }
 
-void pofFluid_velocity(void *x, t_symbol *texture, float f)
+void pofFluid_velocity(void *x, float num, t_symbol *texture, float f)
 {
 	pofFluid* px = (pofFluid*)(((PdObject*)x)->parent);
-	px->velocityTexture = texture;
-	px->velocityForce = f;
+	if(num < 0) num = 0;
+	else if(num >= POFFLUID_MAX_LAYERS) num = POFFLUID_MAX_LAYERS - 1;
+	px->velocityTexture[(int)num] = texture;
+	px->velocityForce[(int)num] = f;
 }
 
-void pofFluid_density(void *x, t_symbol *texture, float f)
+void pofFluid_density(void *x, float num, t_symbol *texture, float f)
 {
 	pofFluid* px = (pofFluid*)(((PdObject*)x)->parent);
-	px->densityTexture = texture;
-	px->densityForce = f;
+	if(num < 0) num = 0;
+	else if(num >= POFFLUID_MAX_LAYERS) num = POFFLUID_MAX_LAYERS - 1;
+	px->densityTexture[(int)num] = texture;
+	px->densityForce[(int)num] = f;
 }
 
 void pofFluid_showGui(void *x, float f)
@@ -47,9 +51,13 @@ void pofFluid_showGui(void *x, float f)
 pofFluid::pofFluid(t_class *Class, float w, float h, int down):
 	pofBase(Class),width(w), height(h), drawWidth(w), drawHeight(h), downSample(down),
 	fluidSimulation(NULL), gui(NULL),
-	densityTexture(NULL), velocityTexture(NULL), pressureTexture(NULL), obstacleTexture(NULL),
+	pressureTexture(NULL), obstacleTexture(NULL),
 	showGui(false)
 {
+	for(int num = 0; num < POFFLUID_MAX_LAYERS; num++) {
+		densityTexture[num] = velocityTexture[num] = NULL;
+		densityForce[num] = velocityForce[num] = 0;
+	}
 }
 
 void pofFluid::draw()
@@ -64,17 +72,20 @@ void pofFluid::draw()
 		setupGui();
 	}
 	
-	if(densityTexture && densityForce) {
-		ofTexture *tex = pofBase::textures[densityTexture];
-		if(tex) fluidSimulation->addDensity(*tex, densityForce);
-	}
-	if(velocityTexture && velocityForce) {
-		ofTexture *tex = pofBase::textures[velocityTexture];
-		if(tex) {
-			fluidSimulation->addVelocity(*tex, velocityForce);
+	for(int num = 0; num < POFFLUID_MAX_LAYERS; num++)
+	{
+		if(densityTexture[num] && densityForce[num]) {
+			ofTexture *tex = pofBase::textures[densityTexture[num]];
+			if(tex) fluidSimulation->addDensity(*tex, densityForce[num]);
+		}
+		if(velocityTexture[num] && velocityForce[num]) {
+			ofTexture *tex = pofBase::textures[velocityTexture[num]];
+			if(tex) {
+				fluidSimulation->addVelocity(*tex, velocityForce[num]);
+			}
 		}
 	}
-
+	
 	ofPushStyle();
 	fluidSimulation->update();
 	fluidSimulation->draw(-width/2, -height/2, width, height);
@@ -125,8 +136,8 @@ void pofFluid::setup(void)
 	//post("pofFluid_setup");
 	pofFluid_class = class_new(gensym("poffluid"), (t_newmethod)pofFluid_new, (t_method)pofFluid_free,
 		sizeof(PdObject), 0, A_DEFFLOAT, A_DEFFLOAT, A_DEFFLOAT, A_NULL);
-	class_addmethod(pofFluid_class, (t_method)pofFluid_density, gensym("density"), A_SYMBOL, A_FLOAT, A_NULL);
-	class_addmethod(pofFluid_class, (t_method)pofFluid_velocity, gensym("velocity"), A_SYMBOL, A_FLOAT, A_NULL);
+	class_addmethod(pofFluid_class, (t_method)pofFluid_density, gensym("density"), A_FLOAT, A_SYMBOL, A_FLOAT, A_NULL);
+	class_addmethod(pofFluid_class, (t_method)pofFluid_velocity, gensym("velocity"), A_FLOAT, A_SYMBOL, A_FLOAT, A_NULL);
 	class_addmethod(pofFluid_class, (t_method)pofFluid_showGui, gensym("showgui"), A_FLOAT, A_NULL);
 	class_addmethod(pofFluid_class, (t_method)tellGUI, gensym("param"), A_GIMME, A_NULL);
 	POF_SETUP(pofFluid_class);
